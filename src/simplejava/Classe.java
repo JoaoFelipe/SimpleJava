@@ -25,7 +25,7 @@ public class Classe {
     public int bracketEnd;
     
     public static List<Classe> extractClasses(String text) {
-            List<Classe> result = new ArrayList<Classe>();
+            List<Classe> allClasses = new ArrayList<Classe>();
             Matcher matcher = pattern.matcher(text);
             while (matcher.find()) {
                 String clsText = "";
@@ -49,8 +49,15 @@ public class Classe {
                     }
                     clsText += c;
                 }
-                result.add(new Classe(clsText, matcher.start(), start, end));
+                allClasses.add(new Classe(clsText, matcher.start(), start, end));
 
+            }
+            //Filtrar InnerClasses
+            List<Classe> result = new ArrayList<Classe>();
+            for (Classe classe : allClasses) {
+                if (!classe.isInnerInList(result)) {
+                    result.add(classe);
+                }
             }
             return result;
 
@@ -90,6 +97,17 @@ public class Classe {
                after;
     }
     
-   
+    public boolean isInnerIn(Classe classe){
+        return this.start > classe.start && this.bracketEnd < classe.bracketEnd;
+    }
+    
+    public boolean isInnerInList(List<Classe> classes){
+        for (Classe classe : classes) {
+            if (this.isInnerIn(classe)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
 }

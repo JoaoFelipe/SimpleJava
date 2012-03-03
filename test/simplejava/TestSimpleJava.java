@@ -82,4 +82,16 @@ public class TestSimpleJava {
         assertTrue(FileUtils.isFileValid("tests"+l+"Test4"+l+"in"+l+"Program.java", digest));
         
     }
+    
+    @Test
+    public void innerClassesShoudntBeChanged() {
+        
+        SimpleJava.apply(
+                "tests"+l+"Test5"+l+"in"+l+"Program.sjava", 
+                "tests"+l+"Test5"+l+"in"+l+"Program.java");
+        
+        String digest = FileUtils.calculateMD5("tests"+l+"Test5"+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+"Test5"+l+"in"+l+"Program.java", digest));
+        
+    }
 }

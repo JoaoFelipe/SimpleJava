@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -25,7 +26,6 @@ import java.util.regex.Pattern;
  * @author Joao
  */
 public class SimpleJava {
-
     /**
      * @param args the command line arguments
      */
@@ -45,6 +45,7 @@ public class SimpleJava {
             }
             text = text.substring(0, text.length() - 1);
             List<Classe> classes = Classe.extractClasses(text);
+
             String mainText = "";
             for (int i = 0; i < text.length(); i++) {
                 boolean add = true;
