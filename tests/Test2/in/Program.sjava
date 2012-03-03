@@ -1,0 +1,5 @@
+System.out.println("test");
+
+public class Program {
+
+}

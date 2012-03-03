@@ -13,9 +13,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -36,15 +39,31 @@ public class SimpleJava {
         BufferedWriter writer = null;
         try {
             Scanner scanner = new Scanner(in);
-            writer = new BufferedWriter(new FileWriter(out));
-            writer.write("public class "+className(inputFile)+" {\n\n");
-            writer.write("    public static void main(String[] args) {\n");
+            String text = "";
             while (scanner.hasNextLine()) {
-                writer.write("        "+scanner.nextLine()+"\n");
+                text += scanner.nextLine() + '\n';
             }
-            writer.write("    }\n");
-            writer.write("}");
-            
+            text = text.substring(0, text.length()-1);
+            List<Classe> classes = Classe.extractClasses(text);
+            String mainText = "";
+            for (int i = 0; i < text.length(); i++) {
+                boolean add = true;
+                for (Classe classe : classes) {
+                    if (i >= classe.start-1 && i<= classe.bracketEnd) 
+                        add = false;
+                }
+                if (add) {
+                    mainText += text.charAt(i); 
+                }
+            }
+            if (classes.isEmpty()) {
+                classes.add(new Classe(className(inputFile)));
+            }
+            classes.get(0).addMain(mainText);
+//            System.out.println("fora = " + fora);
+            writer = new BufferedWriter(new FileWriter(out));
+            writer.write(classes.get(0).text);
+//            
         } catch (IOException ex) {
             Logger.getLogger(SimpleJava.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -55,8 +74,8 @@ public class SimpleJava {
             }
         }
     }
-    
+
     public static String className(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.lastIndexOf('.'));
+        return fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.lastIndexOf('.'));
     }
 }

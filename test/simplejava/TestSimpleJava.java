@@ -46,4 +46,16 @@ public class TestSimpleJava {
         assertTrue(FileUtils.isFileValid("tests"+l+"Test1"+l+"in"+l+"Program.java", digest));
         
     }
+    
+    @Test
+    public void ifClassAlreadyExistsContentShouldBeAddedToNewMethodMain() {
+        
+        SimpleJava.apply(
+                "tests"+l+"Test2"+l+"in"+l+"Program.sjava", 
+                "tests"+l+"Test2"+l+"in"+l+"Program.java");
+        
+        String digest = FileUtils.calculateMD5("tests"+l+"Test2"+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+"Test2"+l+"in"+l+"Program.java", digest));
+        
+    }
 }
