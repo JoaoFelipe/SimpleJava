@@ -43,27 +43,40 @@ public class SimpleJava {
             while (scanner.hasNextLine()) {
                 text += scanner.nextLine() + '\n';
             }
-            text = text.substring(0, text.length()-1);
+            text = text.substring(0, text.length() - 1);
             List<Classe> classes = Classe.extractClasses(text);
             String mainText = "";
             for (int i = 0; i < text.length(); i++) {
                 boolean add = true;
                 for (Classe classe : classes) {
-                    if (i >= classe.start-1 && i<= classe.bracketEnd) 
+                    if (i >= classe.start - 1 && i <= classe.bracketEnd) {
                         add = false;
+                    }
                 }
                 if (add) {
-                    mainText += text.charAt(i); 
+                    mainText += text.charAt(i);
                 }
             }
-            if (classes.isEmpty()) {
-                classes.add(new Classe(className(inputFile)));
-            }
-            classes.get(0).addMain(mainText);
-//            System.out.println("fora = " + fora);
+            String name = className(inputFile);
             writer = new BufferedWriter(new FileWriter(out));
-            writer.write(classes.get(0).text);
-//            
+            boolean found = false;
+            for (int i = 0; i < classes.size(); i++) {
+                Classe classe = classes.get(i);
+                if (classe.getName().equals(name)) {
+                    classe.addMain(mainText);
+                    found = true;
+                }
+                writer.write(classe.text);
+                if (i != classes.size() - 1 || !found) {
+                    writer.write("\n\n");
+                }
+            }
+            if (!found) {
+                Classe main = new Classe(name);
+                main.addMain(mainText);
+                writer.write(main.text);
+            }
+
         } catch (IOException ex) {
             Logger.getLogger(SimpleJava.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

@@ -1,0 +1,5 @@
+System.out.println("test");
+
+class Auxiliar {
+	public static void func() {}
+}

@@ -1,0 +1,9 @@
+System.out.println("test");
+
+class Auxiliar {
+	public static void func() {}
+}
+
+public class Program {
+	public static void func2() {}
+}

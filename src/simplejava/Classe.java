@@ -17,6 +17,7 @@ public class Classe {
     
     public static String clsModifiers = "((abstract|final|private|public|protected|strictfp|static) )?";
     public static Pattern pattern = Pattern.compile(clsModifiers + clsModifiers + clsModifiers + clsModifiers + clsModifiers + "class", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
+    public static Pattern namePattern = Pattern.compile("class ([A-Z0-9.-]+) ", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     
     public String text;
     public int start;
@@ -68,6 +69,16 @@ public class Classe {
         this.bracketStart = 15 + name.length();
         this.bracketEnd = text.length()-1;
     }
+    
+    public String getName() {
+        Matcher matcher = namePattern.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "";
+                
+    }
+    
     
     public void addMain(String mainText) {
         String before = text.substring(0, bracketStart - start + 1);
