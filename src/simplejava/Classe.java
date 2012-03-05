@@ -13,16 +13,16 @@ import java.util.regex.Pattern;
  *
  * @author Joao
  */
-public class Classe {
+public class Classe extends AbstractBlock {
     
     public static String clsModifiers = "((abstract|final|private|public|protected|strictfp|static) )?";
     public static Pattern pattern = Pattern.compile(clsModifiers + clsModifiers + clsModifiers + clsModifiers + clsModifiers + "class", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     public static Pattern namePattern = Pattern.compile("class ([A-Z0-9.-]+) ", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
+    public static Pattern publicPattern = Pattern.compile("public (.*)class", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     
     public String text;
-    public int start;
     public int bracketStart;
-    public int bracketEnd;
+    
     
     public static List<Classe> extractClasses(String text) {
             List<Classe> allClasses = new ArrayList<Classe>();
@@ -67,14 +67,14 @@ public class Classe {
         this.text = clsText;
         this.start = start;
         this.bracketStart = bracketStart;
-        this.bracketEnd = bracketEnd;
+        this.end = bracketEnd;
     }
     
     public Classe(String name) {
         this.text = "public class "+name+" {\n\n}" ;
         this.start = 1;
         this.bracketStart = 15 + name.length();
-        this.bracketEnd = text.length()-1;
+        this.end = text.length()-1;
     }
     
     public String getName() {
@@ -84,6 +84,11 @@ public class Classe {
         }
         return "";
                 
+    }
+    
+    public boolean isPublic() {
+        Matcher matcher = publicPattern.matcher(text);
+        return matcher.find();
     }
     
     
@@ -98,7 +103,7 @@ public class Classe {
     }
     
     public boolean isInnerIn(Classe classe){
-        return this.start > classe.start && this.bracketEnd < classe.bracketEnd;
+        return this.start > classe.start && this.end < classe.end;
     }
     
     public boolean isInnerInList(List<Classe> classes){
