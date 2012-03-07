@@ -59,25 +59,29 @@ public class RegexUtil {
             group(separator()) +                    // 1
             group(                                  // 2 : signature
                 group(CLASS_MODIFIERS) +            // 3(4,5) : modifiers
-                "class" +  
-                notSpecial(BLANK + "+") +           // 6
+                group(                              // 6
+                    "class" +
+                    "|" +
+                    "interface"
+                ) +
+                notSpecial(BLANK + "+") +           // 7
                 BLANK + "+" +
-                group(TYPE) +                       // 7(8) : name
-                group(                              // 9 : implements, extends
+                group(TYPE) +                       // 8(9) : name
+                group(                              // 10 : implements, extends
                     BLANK + "+" +
-                    group(                          // 10
-                        group (                     // 11 : extends
+                    group(                          // 11
+                        group (                     // 12 : extends
                             "extends" +
                             BLANK + "+" +
-                            group(TYPE)             // 12(13)
+                            group(TYPE)             // 13(14)
                         ) + "|" +
-                        group (                     // 14 : implements
+                        group (                     // 15 : implements
                             "implements" +
                             BLANK + "+" +
-                            group(                  // 15
-                                group(TYPE) +       // 16(17)
+                            group(                  // 16
+                                group(TYPE) +       // 17(18)
                                 BLANK + "*" +
-                                group(              // 18
+                                group(              // 19
                                     "," + 
                                     BLANK + "*"
                                 ) + "?"

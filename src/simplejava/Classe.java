@@ -57,7 +57,7 @@ public class Classe extends AbstractBlock {
     public String getName() {
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
-            return matcher.group(7);
+            return matcher.group(8);
         } 
         return null;
     }
