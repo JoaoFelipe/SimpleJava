@@ -75,7 +75,7 @@ public class OuterTextTest {
     
     @Test
     public void allPublicClassesHaveToHaveNameEqualToFileName_Exception() {
-        String test = "allPublicClassesHaveToHaveNameEqualToFileName_Exception";
+        String test = "allPublicClassesHaveToHaveNameEqualToFileName";
         Throwable throwable = null;
         try {
             SimpleJava.apply(
@@ -85,6 +85,20 @@ public class OuterTextTest {
             throwable = tr;
         }
         assertEquals("Public Class should be declared in a File with it name (Program.sjava - Line 3)", throwable.getMessage());
+    }
+    
+    @Test
+    public void mainCantBeCreatedOnInterface_Exception() {
+        String test = "mainCantBeCreatedOnInterface";
+        Throwable throwable = null;
+        try {
+            SimpleJava.apply(
+                    "tests"+l+test+l+"in"+l+"Program.sjava", 
+                    "tests"+l+test+l+"in"+l+"Program.java");
+        } catch (Throwable tr) {
+            throwable = tr;
+        }
+        assertEquals("Main cannot be created on Interface (Program.sjava - Line 2)", throwable.getMessage());
     }
     
 }

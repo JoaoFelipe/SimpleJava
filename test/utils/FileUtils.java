@@ -78,7 +78,9 @@ public class FileUtils {
         Scanner validScanner = new Scanner(valid);
         String fileChar;
         String validChar;
+//        int line = 0;
         while (validScanner.hasNextLine() && fileScanner.hasNextLine()) {
+//            line ++;
             fileChar = fileScanner.nextLine();
             validChar = validScanner.nextLine();
             if (!fileChar.equals(validChar)) {

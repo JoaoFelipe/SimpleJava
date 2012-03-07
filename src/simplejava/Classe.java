@@ -66,6 +66,11 @@ public class Classe extends AbstractBlock {
         Matcher matcher = pattern.matcher(text);
         return (matcher.find() && matcher.group(3).contains("public"));
     }
+    
+    public boolean isInterface() {
+        Matcher matcher = pattern.matcher(text);
+        return (matcher.find() && matcher.group(6).contains("interface"));
+    }
 
     public void addMain(String mainText) throws SyntaxException {
         Method main = getMain();
