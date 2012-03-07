@@ -1,0 +1,6 @@
+System.out.println("main");
+public interface Program {
+    
+	public void test(); 
+     
+}

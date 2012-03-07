@@ -1,6 +1,6 @@
 public class Program {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         System.out.println("main");
     }
     interface I { 

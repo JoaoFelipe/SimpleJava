@@ -82,6 +82,9 @@ public class SimpleJava {
                     Classe classe = classes.get(i);
                     
                     if (classe.getName().equals(name)) {
+                        if (classe.isInterface()) {
+                            throw new SyntaxException("Main cannot be created on Interface", classe.start);
+                        }
                         classe.addMain(mainText);
                         for (Method method : methods) {
                             classe.addStaticMethod(method);
