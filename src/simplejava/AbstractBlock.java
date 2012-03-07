@@ -33,4 +33,18 @@ public class AbstractBlock {
         }
         return mainText;
     }
+    
+    public boolean isInnerIn(AbstractBlock block){
+        return this.start > block.start && this.end < block.end;
+    }
+    
+     
+    public boolean isInnerInList(List<? extends AbstractBlock> blocks){
+        for (AbstractBlock block : blocks) {
+            if (this.isInnerIn(block)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

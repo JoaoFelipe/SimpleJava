@@ -1,0 +1,8 @@
+System.out.println("iniciando");
+
+static void teste() {
+    System.out.println("teste");
+}
+
+teste();
+System.out.println("finalizando");

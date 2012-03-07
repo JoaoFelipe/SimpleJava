@@ -17,32 +17,34 @@ public class RegexUtil {
     public static final String INTERFACE_MODIFIERS = "((abstract|final|private|protected|public|static|strictfp)\\s+)*";
     
     public static final String BLANK = "\\s";
-    public static final String TYPE = "[_A-Z][\\w.]*(<[^\\{\\}\\(\\);]+?>)?(\\[\\])*"; //without next char, > can bug
+    public static final String TYPE = "[_A-Z][\\w.]*(<[^\\{\\}\\(\\);]+?>)?(\\s*\\[\\s*\\])*"; //without next char, > can bug
     public static final String NAME = "[_A-Z]\\w*";
     public static final String ANYTHING = ".*?"; //[ _A-Z0-9.-\[\],]* //without next char, can bug
     
+    public static final String MAIN_PARAMS = "String\\s*((\\.\\.\\.\\s*args)|(\\[\\s*\\]\\s*args)|(args\\s*\\[\\s*\\]))";
+    
     public static String method() {
         return
-            group(separator()) +
-            group(
-                METHOD_MODIFIERS +
-                notSpecial(BLANK+"+") +
-                group(TYPE) +
-                BLANK + "+" +
-                notSpecial(BLANK + "*" + "\\(") +
-                group(NAME) +
+            group(separator()) +                    // 1 
+            group(                                  // 2 : signature
+                group(METHOD_MODIFIERS) +           // 3(4,5) : modifiers
+                notSpecial(BLANK+"+") +             // 6 
+                group(TYPE) +                       // 7(8,9) : type
+                BLANK + "+" +                 
+                notSpecial(BLANK + "*" + "\\(") +   // 10
+                group(NAME) +                       // 11 : name
                 BLANK + "*" +
                 "\\(" +
-                group(ANYTHING) +
+                group(ANYTHING) +                   // 12 : params
                 "\\)" +
                 BLANK + "*" +
-                group(
+                group(                              // 13 : throws exceptions
                     "throws" +
                     BLANK + "+" +
-                    group(
-                        group(NAME) +
+                    group(                          // 14 : exceptions
+                        group(NAME) +               // 15
                         BLANK + "*" +
-                        group(
+                        group(                      // 16
                             "," + 
                             BLANK + "*"
                         ) + "?"

@@ -10,7 +10,7 @@ package simplejava;
  */
 public class SyntaxException extends Exception {
 
-    String text;
+    String text = null;
     String file = null;
     int position;
     
@@ -20,14 +20,23 @@ public class SyntaxException extends Exception {
         this.position = position;
     }
     
+    SyntaxException(String string, int position) {
+        super(string);
+        this.position = position;
+    }
+    
+    
     private int getLine() {
-        int line = 1;
-        for (int i = 0; i < position; i++) {
-            if (text.charAt(i)=='\n') {
-                line++;
+        if (text != null) {
+            int line = 1;
+            for (int i = 0; i < position; i++) {
+                if (text.charAt(i)=='\n') {
+                    line++;
+                }
             }
+            return line;
         }
-        return line;
+        return -1;
     }
     
     @Override
@@ -39,7 +48,12 @@ public class SyntaxException extends Exception {
     }
     
     public void setFile(String fileName) {
-        file = fileName;
+        this.file = fileName;
     }
     
+    public void setTextIfNull(String text) {
+        if (this.text == null) {
+            this.text = text;
+        }
+    }
 }

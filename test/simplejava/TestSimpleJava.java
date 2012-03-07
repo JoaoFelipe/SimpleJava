@@ -37,7 +37,7 @@ public class TestSimpleJava {
     
     @Test
     public void allContentShouldBeMovedToMain() throws SyntaxException {
-        String test = "Test1";
+        String test = "allContentShouldBeMovedToMain";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
@@ -48,7 +48,7 @@ public class TestSimpleJava {
     
     @Test
     public void ifClassAlreadyExistsContentShouldBeAddedToNewMethodMain() throws SyntaxException {
-        String test = "Test2";
+        String test = "ifClassAlreadyExistsContentShouldBeAddedToNewMethodMain";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
@@ -59,7 +59,7 @@ public class TestSimpleJava {
     
     @Test
     public void itShouldChooseTheFilenameClass() throws SyntaxException {
-        String test = "Test3";
+        String test = "itShouldChooseTheFilenameClass";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
@@ -70,7 +70,7 @@ public class TestSimpleJava {
     
     @Test
     public void itShouldCreateTheCorrectClass() throws SyntaxException {
-        String test = "Test4";
+        String test = "itShouldCreateTheCorrectClass";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
@@ -81,7 +81,7 @@ public class TestSimpleJava {
     
     @Test
     public void innerClassesShoudntBeChanged() throws SyntaxException {
-        String test = "Test5";
+        String test = "innerClassesShoudntBeChanged";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
@@ -93,7 +93,7 @@ public class TestSimpleJava {
     
     @Test
     public void importsShouldBeMovedToBegin() throws SyntaxException {
-        String test = "Test6";
+        String test = "importsShouldBeMovedToBegin";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
@@ -104,7 +104,7 @@ public class TestSimpleJava {
     
     @Test
     public void packageShouldBeMovedToBegin() throws SyntaxException {
-        String test = "Test7";
+        String test = "packageShouldBeMovedToBegin";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
@@ -115,39 +115,130 @@ public class TestSimpleJava {
     
     @Test
     public void justOnePackageIsAllowed() {
-        String test = "Syntax8";
+        String test = "justOnePackageIsAllowed";
+        Throwable throwable = null;
         try {
             SimpleJava.apply(
                     "tests"+l+test+l+"in"+l+"Program.sjava", 
                     "tests"+l+test+l+"in"+l+"Program.java");
         } catch (Throwable tr) {
-            assertEquals("You must define just one package (Program.sjava - Line 5)", tr.getMessage());
+            throwable = tr;
         }
+        assertEquals("You must define just one package (Program.sjava - Line 5)", throwable.getMessage());
     }
     
     @Test
     public void publicClassShouldHaveAnIndividualFile() {
-        String test = "Syntax9";
+        String test = "publicClassShouldHaveAnIndividualFile";
+        Throwable throwable = null;
         try {
             SimpleJava.apply(
                     "tests"+l+test+l+"in"+l+"Program.sjava", 
                     "tests"+l+test+l+"in"+l+"Program.java");
         } catch (Throwable tr) {
-            assertEquals("Public Class should be declared in a File with it name (Program.sjava - Line 3)", tr.getMessage());
+            throwable = tr;
         }
-        System.out.println(RegexUtil.method());
+        assertEquals("Public Class should be declared in a File with it name (Program.sjava - Line 3)", throwable.getMessage());
+//        System.out.println(RegexUtil.method());
     }
     
-
+    @Test
+    public void methodsShouldBeMovedToClass() throws SyntaxException {
+        String test = "methodsShouldBeMovedToClass";
+        SimpleJava.apply(
+                "tests"+l+test+l+"in"+l+"Program.sjava", 
+                "tests"+l+test+l+"in"+l+"Program.java");
+        
+        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+    }
+    
+    @Test
+    public void staticMethodsShouldBeMovedToClass() throws SyntaxException {
+        String test = "staticMethodsShouldBeMovedToClass";
+        SimpleJava.apply(
+                "tests"+l+test+l+"in"+l+"Program.sjava", 
+                "tests"+l+test+l+"in"+l+"Program.java");
+        
+        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+    }
+    
+    @Test
+    public void methodInClassShouldntBeMoved() throws SyntaxException {
+        String test = "methodInClassShouldntBeMoved";
+        SimpleJava.apply(
+                "tests"+l+test+l+"in"+l+"Program.sjava", 
+                "tests"+l+test+l+"in"+l+"Program.java");
+        
+        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+    }
+    
+    @Test
+    public void mainAlreadyExistsInClass() {
+        String test = "mainAlreadyExistsInClass";
+        Throwable throwable = null;
+        try {
+            SimpleJava.apply(
+                    "tests"+l+test+l+"in"+l+"Program.sjava", 
+                    "tests"+l+test+l+"in"+l+"Program.java");
+        } catch (Throwable tr) {
+            throwable = tr;
+        }
+        assertEquals("Main already exists (Program.sjava - Line 12)", throwable.getMessage());
+    }
+    
+    @Test
+    public void mainAlreadyExistsInClass2() {
+        String test = "mainAlreadyExistsInClass2";
+        Throwable throwable = null;
+        try {
+            SimpleJava.apply(
+                    "tests"+l+test+l+"in"+l+"Program.sjava", 
+                    "tests"+l+test+l+"in"+l+"Program.java");
+        } catch (Throwable tr) {
+            throwable = tr;
+        }
+        assertEquals("Main already exists (Program.sjava - Line 12)", throwable.getMessage());
+    }
+    
+    @Test
+    public void mainAlreadyExistsInClass3() {
+        String test = "mainAlreadyExistsInClass3";
+        Throwable throwable = null;
+        try {
+            SimpleJava.apply(
+                    "tests"+l+test+l+"in"+l+"Program.sjava", 
+                    "tests"+l+test+l+"in"+l+"Program.java");
+        } catch (Throwable tr) {
+            throwable = tr;
+        }
+        assertEquals("Main already exists (Program.sjava - Line 12)", throwable.getMessage());
+    }
+    
+    @Test
+    public void nonStaticMainShoudntBeFound() throws SyntaxException {
+        String test = "nonStaticMainShoudntBeFound";
+        SimpleJava.apply(
+                "tests"+l+test+l+"in"+l+"Program.sjava", 
+                "tests"+l+test+l+"in"+l+"Program.java");
+        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+    }
+    
+    @Test
+    public void mainWithWrongParamsShoudntBeFound() throws SyntaxException {
+        String test = "mainWithWrongParamsShoudntBeFound";
+        SimpleJava.apply(
+                "tests"+l+test+l+"in"+l+"Program.sjava", 
+                "tests"+l+test+l+"in"+l+"Program.java");
+        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+    }
     
     //TODO:
-    //method: modifiers+special(blank+"+")+"("+type+")"+blank+"+"+"("+name+")"+blank+"*\\(("+anything+")\\)"+blank+"*(throws (("+name+")"+blank+"*(,"+blank+"*)?)+)?\\{"
-    //  modifiers: ((abstract|final|private|public|protected|strictfp|static|synchronized|native|transient|volatile) )*
-    //  special-prox-: (?!(else|if)prox)
-    //  type: [_A-Z][_A-Z0-9.-]*(<.*?>)?(\[\])*
-    //  blank: \s
-    //  name: [_A-Z][_A-Z0-9.-]*
-    //  anything: [ _A-Z0-9.-\[\],]*
+
     //local class
     //interface
     //enum

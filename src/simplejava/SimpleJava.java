@@ -35,6 +35,7 @@ public class SimpleJava {
     }
 
     public static void apply(String inputFile, String outputFile) throws SyntaxException {
+        String text = "";
         try {
             File in = new File(inputFile);
             File out = new File(outputFile);
@@ -43,7 +44,6 @@ public class SimpleJava {
                 Scanner scanner = new Scanner(in);
                 writer = new BufferedWriter(new FileWriter(out));
                 
-                String text = "";
                 while (scanner.hasNextLine()) {
                     text += scanner.nextLine() + '\n';
                 }
@@ -52,11 +52,13 @@ public class SimpleJava {
                 List<Classe> classes = Classe.extractClasses(text);
                 List<Import> imports = Import.extractImports(text);
                 List<Package> packages = Package.extractPackages(text);
+                List<Method> methods = Method.extractMethods(text);
 
                 List<AbstractBlock> blocks = new ArrayList<AbstractBlock>();
                 blocks.addAll(classes);
                 blocks.addAll(imports);
                 blocks.addAll(packages);
+                blocks.addAll(methods);
 
                 String mainText = AbstractBlock.removeBlocksFromText(blocks, text);
 
@@ -81,6 +83,9 @@ public class SimpleJava {
                     
                     if (classe.getName().equals(name)) {
                         classe.addMain(mainText);
+                        for (Method method : methods) {
+                            classe.addStaticMethod(method);
+                        }
                         found = true;
                     } else if (classe.isPublic()) {
                         throw new SyntaxException("Public Class should be declared in a File with it name", text, classe.start);
@@ -93,6 +98,9 @@ public class SimpleJava {
                 if (!found) {
                     Classe main = new Classe(name);
                     main.addMain(mainText);
+                    for (Method method : methods) {
+                        main.addStaticMethod(method);
+                    }
                     writer.write(main.text);
                 }
 
@@ -106,6 +114,7 @@ public class SimpleJava {
                 }
             }
         } catch (SyntaxException s) {
+            s.setTextIfNull(text);
             s.setFile(inputFile.substring(inputFile.lastIndexOf(File.separator) + 1));
             throw s;
         }

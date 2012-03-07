@@ -1,0 +1,16 @@
+System.out.println("iniciando");
+
+static void teste() {
+    System.out.println("teste");
+}
+
+teste();
+System.out.println("finalizando");
+
+public class Program {
+
+	public static void main(String args[]) {
+		System.out.println("teste2");
+	}
+
+}
