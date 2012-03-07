@@ -237,9 +237,20 @@ public class TestSimpleJava {
         assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
     }
     
+    @Test
+    public void localClassShoudntBeMoved() throws SyntaxException {
+        System.out.println(RegexUtil.cls());
+        String test = "localClassShoudntBeMoved";
+        SimpleJava.apply(
+                "tests"+l+test+l+"in"+l+"Program.sjava", 
+                "tests"+l+test+l+"in"+l+"Program.java");
+        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
+        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+    }
+    
     //TODO:
-
-    //local class
+    //corrigir import
+    //corrigir package
     //interface
     //enum
     //annotation

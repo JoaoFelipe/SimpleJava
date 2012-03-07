@@ -17,11 +17,48 @@ public class RegexUtil {
     public static final String INTERFACE_MODIFIERS = "((abstract|final|private|protected|public|static|strictfp)\\s+)*";
     
     public static final String BLANK = "\\s";
-    public static final String TYPE = "[_A-Z][\\w.]*(<[^\\{\\}\\(\\);]+?>)?(\\s*\\[\\s*\\])*"; //without next char, > can bug
+    public static final String TYPE = "[_A-Z][\\w.]*(<[^\\{\\}\\(\\);]+?>)?"; //without next char, > can bug
+    public static final String ARRAY = "(\\s*\\[\\s*\\])*";
     public static final String NAME = "[_A-Z]\\w*";
     public static final String ANYTHING = ".*?"; //[ _A-Z0-9.-\[\],]* //without next char, can bug
     
     public static final String MAIN_PARAMS = "String\\s*((\\.\\.\\.\\s*args)|(\\[\\s*\\]\\s*args)|(args\\s*\\[\\s*\\]))";
+    
+    public static String cls() {
+        return
+            group(separator()) +                    // 1
+            group(                                  // 2 : signature
+                group(CLASS_MODIFIERS) +            // 3(4,5) : modifiers
+                "class" +  
+                notSpecial(BLANK + "+") +           // 6
+                BLANK + "+" +
+                group(TYPE) +                       // 7(8) : name
+                group(                              // 9 : implements, extends
+                    BLANK + "+" +
+                    group(                          // 10
+                        group (                     // 11 : extends
+                            "extends" +
+                            BLANK + "+" +
+                            group(TYPE)             // 12(13)
+                        ) + "|" +
+                        group (                     // 14 : implements
+                            "implements" +
+                            BLANK + "+" +
+                            group(                  // 15
+                                group(TYPE) +       // 16(17)
+                                BLANK + "*" +
+                                group(              // 18
+                                    "," + 
+                                    BLANK + "*"
+                                ) + "?"
+                            ) + "+"
+                        )
+                    ) 
+                ) + "*" +
+                BLANK + "+" +
+                "\\{"
+            );
+    }
     
     public static String method() {
         return
@@ -29,7 +66,7 @@ public class RegexUtil {
             group(                                  // 2 : signature
                 group(METHOD_MODIFIERS) +           // 3(4,5) : modifiers
                 notSpecial(BLANK+"+") +             // 6 
-                group(TYPE) +                       // 7(8,9) : type
+                group(TYPE+ARRAY) +                       // 7(8,9) : type
                 BLANK + "+" +                 
                 notSpecial(BLANK + "*" + "\\(") +   // 10
                 group(NAME) +                       // 11 : name
@@ -54,8 +91,6 @@ public class RegexUtil {
             );
     
    }
-    
-        //method: +blank+"*(,"+blank+"*)?"
 
     
     private static String[] KEYWORDS = {
@@ -118,7 +153,7 @@ public class RegexUtil {
                 result.append(string);
             }
             
-            result.append("]");
+            result.append("]?");
             SEPARATOR_OPTIONS = result.toString();       
         }
         return SEPARATOR_OPTIONS;

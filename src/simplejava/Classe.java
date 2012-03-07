@@ -15,52 +15,29 @@ import java.util.regex.Pattern;
  */
 public class Classe extends AbstractBlock {
 
-    public static String clsModifiers = "((abstract|final|private|public|protected|strictfp|static) )?";
-    public static Pattern pattern = Pattern.compile(clsModifiers + clsModifiers + clsModifiers + clsModifiers + clsModifiers + "class", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
-    public static Pattern namePattern = Pattern.compile("class ([A-Z0-9.-]+) ", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
-    public static Pattern publicPattern = Pattern.compile("public (.*)class", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
+    public static Pattern pattern = Pattern.compile(RegexUtil.cls(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     public String text;
     public int bracketStart;
     
     private List<Method> methods = null;
 
     public static List<Classe> extractClasses(String text) {
+        List<Block> blocks = Block.findBlocks(text);
         List<Classe> allClasses = new ArrayList<Classe>();
         Matcher matcher = pattern.matcher(text);
+        
         while (matcher.find()) {
-            String clsText = "";
-            int open = 0;
-            int start = -1;
-            int end = -1;
-            for (int j = matcher.start(); j < text.length() && !(start != -1 && end != -1); j++) {
-                char c = text.charAt(j);
-                if (c == '{') {
-                    if (open == 0) {
-                        start = j;
-                    }
-                    open++;
-                }
-                if (c == '}') {
-                    open--;
-                    if (open == 0) {
-                        end = j;
-                    }
-
-                }
-                clsText += c;
-            }
-            allClasses.add(new Classe(clsText, matcher.start(), start, end));
-
-        }
-        //Filtrar InnerClasses
-        List<Classe> result = new ArrayList<Classe>();
-        for (Classe classe : allClasses) {
-            if (!classe.isInnerInList(result)) {
-                result.add(classe);
+            int start = text.indexOf("{", matcher.start(2));
+            int end = Block.blockThatStartsIn(start, blocks).end;
+            String methodText = text.substring(matcher.start(2), end+1);
+            
+            Classe classe = new Classe(methodText, matcher.start(2), start, end);
+            //Filtrar InnerClasses e LocalClasses
+            if (Block.topBlock(classe, blocks).getLevel().intValue() == -1) {
+                allClasses.add(classe);
             }
         }
-        return result;
-
+        return allClasses;
     }
 
     public Classe(String clsText, int start, int bracketStart, int bracketEnd) {
@@ -78,17 +55,16 @@ public class Classe extends AbstractBlock {
     }
 
     public String getName() {
-        Matcher matcher = namePattern.matcher(text);
+        Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return "";
-
+            return matcher.group(7);
+        } 
+        return null;
     }
 
     public boolean isPublic() {
-        Matcher matcher = publicPattern.matcher(text);
-        return matcher.find();
+        Matcher matcher = pattern.matcher(text);
+        return (matcher.find() && matcher.group(3).contains("public"));
     }
 
     public void addMain(String mainText) throws SyntaxException {

@@ -64,6 +64,16 @@ public class Block extends AbstractBlock {
         return blocks.get(blocks.size()-1);
     }
     
+    public static Block blockThatStartsIn(int position, List<Block> blocks) {
+        for (int i = 0; i < blocks.size(); i++) {
+            Block block = blocks.get(i);
+            if (block.start == position) {
+                return block;
+            }
+        }
+        return null;
+    }
+    
     private int level;
 
     public Block(int count, int start, int end) {

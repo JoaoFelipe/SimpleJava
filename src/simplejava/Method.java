@@ -23,37 +23,19 @@ public class Method extends AbstractBlock {
         List<Block> blocks = Block.findBlocks(text);
         List<Method> allMethods = new ArrayList<Method>();
         Matcher matcher = pattern.matcher(text);
+        
         while (matcher.find()) {
-            String clsText = "";
-            int open = 0;
-            int start = -1;
-            int end = -1;
-            for (int j = matcher.start(2); j < text.length() && !(start != -1 && end != -1); j++) {
-                char c = text.charAt(j);
-                if (c == '{') {
-                    if (open == 0) {
-                        start = j;
-                    }
-                    open++;
-                }
-                if (c == '}') {
-                    open--;
-                    if (open == 0) {
-                        end = j;
-                    }
-
-                }
-                clsText += c;
-            }
+            int start = text.indexOf("{", matcher.start(2));
+            int end = Block.blockThatStartsIn(start, blocks).end;
+            String clsText = text.substring(matcher.start(2), end+1);
+            
             Method method = new Method(clsText, matcher.start(2), start, end);
             //Filtrar Metodos de classe
             if (Block.topBlock(method, blocks).getLevel().intValue() == -1) {
                 allMethods.add(method);
             }
         }
-
         return allMethods;
-
     }
 
     public Method(String methodText, int start, int bracketStart, int bracketEnd) {
@@ -71,7 +53,7 @@ public class Method extends AbstractBlock {
     }
     
     public String getName() {
-        Matcher matcher = pattern.matcher(' '+text);
+        Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             return matcher.group(11);
         } 
@@ -79,7 +61,7 @@ public class Method extends AbstractBlock {
     }
     
     public String getParams() {
-        Matcher matcher = pattern.matcher(' '+text);
+        Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             return matcher.group(12);
         } 
@@ -87,7 +69,7 @@ public class Method extends AbstractBlock {
     }
     
     public boolean isStatic() {
-        Matcher matcher = pattern.matcher(' '+text);
+        Matcher matcher = pattern.matcher(text);
         return (matcher.find() && matcher.group(3).contains("static"));
     }
     
