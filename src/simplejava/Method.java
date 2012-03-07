@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Method extends AbstractBlock {
 
-    public static Pattern pattern = Pattern.compile(RegexUtil.method(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
+    public static Pattern pattern = Pattern.compile(RegexUtil._method(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     public String text;
     public int bracketStart;
 

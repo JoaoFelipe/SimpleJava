@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Import extends AbstractBlock {
     
-    public static Pattern pattern = Pattern.compile("import ([A-Z0-9.-]+);(\n?)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
+    public static Pattern pattern = Pattern.compile(RegexUtil._import(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     
     public String text;
     
@@ -23,10 +23,9 @@ public class Import extends AbstractBlock {
             List<Import> result = new ArrayList<Import>();
             Matcher matcher = pattern.matcher(text);
             while (matcher.find()) {               
-                result.add(new Import(matcher.group(), matcher.start(), matcher.end()));
+                result.add(new Import(matcher.group(2), matcher.start(2), matcher.end(2)));
             }
             return result;
-
     }
 
     public Import(String clsText, int start, int end) {

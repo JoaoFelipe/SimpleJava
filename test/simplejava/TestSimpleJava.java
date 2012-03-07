@@ -239,7 +239,7 @@ public class TestSimpleJava {
     
     @Test
     public void localClassShoudntBeMoved() throws SyntaxException {
-        System.out.println(RegexUtil.cls());
+        System.out.println(RegexUtil._class());
         String test = "localClassShoudntBeMoved";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
@@ -249,8 +249,6 @@ public class TestSimpleJava {
     }
     
     //TODO:
-    //corrigir import
-    //corrigir package
     //interface
     //enum
     //annotation

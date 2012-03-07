@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Package extends AbstractBlock {
     
-    public static Pattern pattern = Pattern.compile("package ([A-Z0-9.-]+);(\n?)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
+    public static Pattern pattern = Pattern.compile(RegexUtil._package(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     
     public String text;
     
@@ -25,13 +25,12 @@ public class Package extends AbstractBlock {
             boolean found = false;
             while (matcher.find()) { 
                 if (found) {
-                    throw new SyntaxException("You must define just one package", text, matcher.start());
+                    throw new SyntaxException("You must define just one package", text, matcher.start(2));
                 }
-                result.add(new Package(matcher.group(), matcher.start(), matcher.end()));
+                result.add(new Package(matcher.group(2), matcher.start(2), matcher.end(2)));
                 found = true;
             }
             return result;
-
     }
 
     public Package(String clsText, int start, int end) {
