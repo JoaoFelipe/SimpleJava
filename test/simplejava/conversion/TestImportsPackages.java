@@ -23,35 +23,42 @@ public class TestImportsPackages {
     public static String l = File.separator;
        
     @Test
-    public void importsShouldBeMovedToBOF() throws SyntaxException {
+    public void importsShouldBeMovedToBOF() throws Exception {
         String test = "importsShouldBeMovedToBOF";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void packageShouldBeMovedToBOF() throws SyntaxException {
+    public void packageShouldBeMovedToBOF() throws Exception {
         String test = "packageShouldBeMovedToBOF";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
         
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void staticImportShouldBeMovedToBOF() throws SyntaxException {
+    public void staticImportShouldBeMovedToBOF() throws Exception {
         String test = "staticImportShouldBeMovedToBOF";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test

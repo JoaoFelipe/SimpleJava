@@ -6,6 +6,7 @@ package simplejava.conversion;
  */
 
 import java.io.File;
+import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,77 +24,95 @@ public class TestBlocks {
     public static String l = File.separator;
 
     @Test
-    public void innerClassesShoudntBeMoved() throws SyntaxException {
+    public void innerClassesShoudntBeMoved() throws Exception {
         String test = "innerClassesShoudntBeMoved";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
         
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
+//        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
     }
     
     @Test
-    public void outerMethodsShouldBeMovedToClassAsStaticMethods() throws SyntaxException {
+    public void outerMethodsShouldBeMovedToClassAsStaticMethods() throws Exception {
         String test = "outerMethodsShouldBeMovedToClassAsStaticMethods";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void staticMethodsShouldBeMovedToClass() throws SyntaxException {
+    public void staticMethodsShouldBeMovedToClass() throws Exception {
         String test = "staticMethodsShouldBeMovedToClass";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
         
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void innerMethodsShoudntBeMoved() throws SyntaxException {
+    public void innerMethodsShoudntBeMoved() throws Exception {
         String test = "innerMethodsShoudntBeMoved";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void localClassesShoudntBeMoved() throws SyntaxException {
+    public void localClassesShoudntBeMoved() throws Exception {
         String test = "localClassesShoudntBeMoved";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+               
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void nonStaticMainShoudntBeRecognizedAsMain() throws SyntaxException {
+    public void nonStaticMainShoudntBeRecognizedAsMain() throws Exception {
         String test = "nonStaticMainShoudntBeRecognizedAsMain";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void staticMainWithWrongParamsShoudntBeRecognizedAsMain() throws SyntaxException {
+    public void staticMainWithWrongParamsShoudntBeRecognizedAsMain() throws Exception {
         String test = "staticMainWithWrongParamsShoudntBeRecognizedAsMain";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));;
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test

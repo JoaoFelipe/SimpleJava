@@ -22,47 +22,55 @@ public class TestOuterText {
     public static String l = File.separator;
     
     @Test
-    public void outerTextShouldBeMovedToMain() throws SyntaxException {
+    public void outerTextShouldBeMovedToMain() throws Exception {
         String test = "outerTextShouldBeMovedToMain";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
         
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void outerTextShouldBeMovedToNewMethodMainOnExistentClass() throws SyntaxException {
+    public void outerTextShouldBeMovedToNewMethodMainOnExistentClass() throws Exception {
         String test = "outerTextShouldBeMovedToNewMethodMainOnExistentClass";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
         
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void outerTextShouldBeMovedToNewMethodMainOfFilenameClass() throws SyntaxException {
+    public void outerTextShouldBeMovedToNewMethodMainOfFilenameClass() throws Exception {
         String test = "outerTextShouldBeMovedToNewMethodMainOfFilenameClass";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
         
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test
-    public void outerTextShouldBeMovedToMainOfNewClassWhenExistsOneWithWrongFilename() throws SyntaxException {
+    public void outerTextShouldBeMovedToMainOfNewClassWhenExistsOneWithWrongFilename() throws Exception {
         String test = "outerTextShouldBeMovedToMainOfNewClassWhenExistsOneWithWrongFilename";
         SimpleJava.apply(
                 "tests"+l+test+l+"in"+l+"Program.sjava", 
                 "tests"+l+test+l+"in"+l+"Program.java");
-        
-        String digest = FileUtils.calculateMD5("tests"+l+test+l+"out"+l+"Program.java");
-        assertTrue(FileUtils.isFileValid("tests"+l+test+l+"in"+l+"Program.java", digest));
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
     }
     
     @Test

@@ -9,11 +9,13 @@ package utils;
  * @author Joao
  */
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.math.BigInteger;
 import java.security.*;
+import java.util.Scanner;
 
 public class FileUtils {
 
@@ -67,5 +69,28 @@ public class FileUtils {
     
     public static String calculateMD5(String file) {
         return calculateMD5(new File(file));
+    }
+
+    public static boolean isEqual(String verified, String correct) throws IOException {
+        File file = new File(verified);
+        File valid = new File(correct);
+        Scanner fileScanner = new Scanner(file);
+        Scanner validScanner = new Scanner(valid);
+        String fileChar;
+        String validChar;
+        while (validScanner.hasNextLine() && fileScanner.hasNextLine()) {
+            fileChar = fileScanner.nextLine();
+            validChar = validScanner.nextLine();
+            if (!fileChar.equals(validChar)) {
+                fileScanner.close();
+                validScanner.close();
+                return false;
+            }
+        }
+        
+        fileScanner.close();
+        validScanner.close();
+        return true;
+
     }
 }
