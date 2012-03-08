@@ -25,7 +25,26 @@ public class RegexUtil {
     public static final String NAME = "[_A-Z]\\w*";
     public static final String ARRAY = "(\\s*\\[\\s*\\])*";
     
+    
     public static final String MAIN_PARAMS = "String\\s*((\\.\\.\\.\\s*args)|(\\[\\s*\\]\\s*args)|(args\\s*\\[\\s*\\]))";
+    
+    public static String _annotation() {
+        return
+            group(                                  // 1 : all annotations
+                group(                              // 2
+                    group(                          // 3
+                        "@" +
+                        BLANK + "*" +
+                        PACKAGE                     // Name Rule seems to be the same
+                    ) +
+                    group(                          // 4
+                        BLANK + "*" +
+                        "\\(" + ANYTHING + "\\)"
+                    ) + "?" +
+                    BLANK + "+"
+                ) + "*"
+            );
+    }
     
     public static String _package() {
         return

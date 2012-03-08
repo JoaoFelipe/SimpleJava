@@ -200,7 +200,6 @@ public class BlocksTest {
 
 
     //TODO:
-    //enum
     //annotation
     //comment, javadoc
     //static var
