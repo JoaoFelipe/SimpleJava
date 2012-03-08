@@ -93,7 +93,7 @@ public class SimpleJava {
                     } else if (classe.isPublic()) {
                         throw new SyntaxException("Public Class should be declared in a File with it name", text, classe.start);
                     }
-                    writer.write(classe.text);
+                    writer.write(classe.getText());
                     if (i != classes.size() - 1 || !found) {
                         writer.write("\n\n");
                     }
@@ -104,7 +104,7 @@ public class SimpleJava {
                     for (Method method : methods) {
                         main.addStaticMethod(method);
                     }
-                    writer.write(main.text);
+                    writer.write(main.getText());
                 }
 
             } catch (IOException ex) {

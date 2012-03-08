@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import simplejava.RegexUtil;
 import simplejava.SimpleJava;
 import simplejava.SyntaxException;
 import utils.FileUtils;
@@ -127,6 +128,19 @@ public class BlocksTest {
             "tests"+l+test+l+"out"+l+"Program.java")
         );
     }
+    
+    @Test
+    public void classRulesShouldBeAppliedToEnums() throws Exception {
+        String test = "classRulesShouldBeAppliedToEnums";
+        SimpleJava.apply(
+                "tests"+l+test+l+"in"+l+"Program.sjava",
+                "tests"+l+test+l+"in"+l+"Program.java");
+
+        assertTrue(FileUtils.isEqual(
+            "tests"+l+test+l+"in"+l+"Program.java",
+            "tests"+l+test+l+"out"+l+"Program.java")
+        );
+    }
 
     @Test
     public void oneClassShouldHaveJustOneMain_Exception() {
@@ -170,12 +184,25 @@ public class BlocksTest {
         assertEquals("Main already exists (Program.sjava - Line 12)", throwable.getMessage());
     }
     
+    @Test
+    public void enumShouldHaveEnumeration_Exception() {
+        String test = "enumShouldHaveEnumeration";
+        Throwable throwable = null;
+        try {
+            SimpleJava.apply(
+                    "tests"+l+test+l+"in"+l+"Program.sjava", 
+                    "tests"+l+test+l+"in"+l+"Program.java");
+        } catch (Throwable tr) {
+            throwable = tr;
+        }
+        assertEquals("Enum enumeration is not defined (Program.sjava - Line 3)", throwable.getMessage());
+    }
 
 
     //TODO:
-    //interface
     //enum
     //annotation
+    //comment, javadoc
     //static var
     //testar exemplos: http://en.wikipedia.org/wiki/Java_syntax
     

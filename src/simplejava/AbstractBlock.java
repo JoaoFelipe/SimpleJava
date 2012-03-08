@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Joao
  */
-public class AbstractBlock {
+public abstract class AbstractBlock {
     public int start;
     public int end;
     

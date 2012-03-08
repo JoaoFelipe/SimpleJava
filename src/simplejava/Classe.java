@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class Classe extends AbstractBlock {
 
     public static Pattern pattern = Pattern.compile(RegexUtil._class(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
-    public String text;
+    private String text;
     public int bracketStart;
     
     private List<Method> methods = null;
@@ -55,7 +55,7 @@ public class Classe extends AbstractBlock {
     }
 
     public String getName() {
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = pattern.matcher(getText());
         if (matcher.find()) {
             return matcher.group(8);
         } 
@@ -63,13 +63,18 @@ public class Classe extends AbstractBlock {
     }
 
     public boolean isPublic() {
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = pattern.matcher(getText());
         return (matcher.find() && matcher.group(3).contains("public"));
     }
     
     public boolean isInterface() {
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = pattern.matcher(getText());
         return (matcher.find() && matcher.group(6).contains("interface"));
+    }
+    
+    public boolean isEnum() {
+        Matcher matcher = pattern.matcher(getText());
+        return (matcher.find() && matcher.group(6).contains("enum"));
     }
 
     public void addMain(String mainText) throws SyntaxException {
@@ -77,19 +82,19 @@ public class Classe extends AbstractBlock {
         if (main != null){
             throw new SyntaxException("Main already exists", this.bracketStart+main.start);
         }
-        String before = text.substring(0, bracketStart - start + 1);
-        String after = text.substring(bracketStart - start + 1);
-        text = before + "\n\n"
-                + "    public static void main(String[] args) {\n"
-                + "        " + mainText.replaceAll("\n", "\n        ") + '\n'
-                + "    }" + ((after.charAt(0) == '\n') ? "" : "\n")
-                + after;
+        addStaticMethod(Method.createMain(mainText));
     }
 
-    public void addStaticMethod(Method method) {
-        String before = text.substring(0, bracketStart - start + 1);
-        String after = text.substring(bracketStart - start + 1);
-        text = before + "\n\n    " + method.getStaticText().replaceAll("\n", "\n    ") + after;
+    public void addStaticMethod(Method method) throws SyntaxException {
+        if (isEnum() && getEnumDefinition().isEmpty()) {
+            throw new SyntaxException("Enum enumeration is not defined", this.start);
+        }
+        String before = getText().substring(0, getStartBlockPosition());
+        String after = getText().substring(getStartBlockPosition());
+        setText(before + "\n\n    " + 
+                method.getStaticText().replaceAll("\n", "\n    ") + 
+                ((after.charAt(0) == '\n') ? "" : "\n") + 
+                after);
     }
 
     public Method getMain() {
@@ -101,11 +106,45 @@ public class Classe extends AbstractBlock {
         return null;
     }
     
-    
     public List<Method> getMethods() {
         if (methods == null) {
-            methods = Method.extractMethods(text.substring(bracketStart+1-start, end-1-start));
+            methods = Method.extractMethods(getTextBetweenBrackets());
         }
         return methods;
     }
+    
+    public String getTextBetweenBrackets() {
+        return text.substring(bracketStart+1-start, end-1-start);
+    }
+    
+    public int getStartBlockPosition() {
+        int result = bracketStart - start + 1;
+        if (isEnum()) {
+            result += getEnumDefinition().length() + 1;
+        }
+        return result;
+    }
+    
+    public String getEnumDefinition() {
+        List<Block> blocks = Block.findBlocks(text);
+        String inner = getTextBetweenBrackets();
+        int index = -1;
+        do {
+            index = inner.indexOf(";", index+1);
+            if (index != -1 && Block.topBlock(new CharacterBlock(index), blocks).getLevel().intValue() == 0) {
+                return inner.substring(0, index);
+            }
+        } while (index != -1);
+        return "";    
+    }
+    
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+
 }

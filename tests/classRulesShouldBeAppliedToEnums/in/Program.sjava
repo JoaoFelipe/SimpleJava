@@ -1,0 +1,20 @@
+System.out.println("main");
+
+void teste() {
+    System.out.println("teste");
+}
+public enum Program {
+    ELEMENTO1, ELEMENTO2;
+    interface I { 
+        public void test(); 
+    }
+    
+    public enum C implements I {
+        INNER1, INNER2;
+        
+        @Override
+        public void test() {
+            System.out.println("test");
+        }
+    }
+}

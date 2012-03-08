@@ -62,7 +62,9 @@ public class RegexUtil {
                 group(                              // 6
                     "class" +
                     "|" +
-                    "interface"
+                    "interface" +
+                    "|" +
+                    "enum"
                 ) +
                 notSpecial(BLANK + "+") +           // 7
                 BLANK + "+" +

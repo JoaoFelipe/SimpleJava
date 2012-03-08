@@ -37,12 +37,26 @@ public class Method extends AbstractBlock {
         }
         return allMethods;
     }
+    
+    public static Method createMain(String mainBody) {
+        return new Method(mainBody);
+    }
 
     public Method(String methodText, int start, int bracketStart, int bracketEnd) {
         this.text = methodText;
         this.start = start;
         this.bracketStart = bracketStart;
         this.end = bracketEnd;
+    }
+    
+    private Method(String mainBody) {
+        this.text = 
+            "public static void main(String[] args) {" + '\n' +
+            "    "+mainBody.replaceAll("\n", "\n    ") + '\n' +
+            "}";
+        this.start = 0;
+        this.bracketStart = "public static void main(String[] args) {".length();
+        this.end = text.length();
     }
 
     public String getStaticText() {
