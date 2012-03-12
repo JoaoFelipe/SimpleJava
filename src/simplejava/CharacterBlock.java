@@ -8,11 +8,10 @@ package simplejava;
  *
  * @author Joao
  */
-public class CharacterBlock extends AbstractBlock{
+public class CharacterBlock extends Block{
     
     public CharacterBlock(int pos) {
-        this.start = pos;
-        this.end = pos;
+        super(pos, pos);
     }
     
     

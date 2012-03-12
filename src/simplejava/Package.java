@@ -13,30 +13,33 @@ import java.util.regex.Pattern;
  *
  * @author Joao
  */
-public class Package extends AbstractBlock {
+public class Package extends Block {
     
     public static Pattern pattern = Pattern.compile(RegexUtil._package(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     
-    public String text;
+    private Code code;
     
-    public static List<Package> extractPackages(String text) throws SyntaxException {
+    public static List<Package> extractPackages(Code code) throws SyntaxException {
             List<Package> result = new ArrayList<Package>();
-            Matcher matcher = pattern.matcher(text);
+            Matcher matcher = pattern.matcher(code.text);
             boolean found = false;
             while (matcher.find()) { 
                 if (found) {
-                    throw new SyntaxException("You must define just one package", text, matcher.start(2));
+                    throw new SyntaxException("You must define just one package", code, matcher.start(2));
                 }
-                result.add(new Package(matcher.group(2), matcher.start(2), matcher.end(2)));
+                result.add(new Package(code, matcher.start(2), matcher.end(2)));
                 found = true;
             }
             return result;
     }
 
-    public Package(String clsText, int start, int end) {
-        this.text = clsText;
-        this.start = start;
-        this.end = end;
+    public Package(Code code, int start, int end) {
+        super(start, end);
+        this.code = code;
+    }
+
+    public String getText() {
+        return code.text.substring(this.getStart(), this.getEnd());
     }
     
 }

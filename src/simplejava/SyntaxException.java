@@ -10,13 +10,13 @@ package simplejava;
  */
 public class SyntaxException extends Exception {
 
-    String text = null;
+    Code code = null;
     String file = null;
     int position;
     
-    SyntaxException(String string, String text, int position) {
+    SyntaxException(String string, Code code, int position) {
         super(string);
-        this.text = text;
+        this.code = code;
         this.position = position;
     }
     
@@ -27,16 +27,22 @@ public class SyntaxException extends Exception {
     
     
     private int getLine() {
-        if (text != null) {
-            int line = 1;
-            for (int i = 0; i < position; i++) {
-                if (text.charAt(i)=='\n') {
-                    line++;
-                }
+        int line = 1;
+        int original = code.history.getOriginal(position);
+//        code.text.charAt(30)
+        code.textWithComment.charAt(original);
+        for (int i = 0; i < original; i++) {
+            if (code.textWithComment.charAt(i)=='\n') {
+                line++;
             }
-            return line;
         }
-        return -1;
+        return line;
+//        if (code != null) {
+//            for (Move line : code.lines) {
+//                if (position >= line.getStart() && position <= line.getEnd())
+//                    return line.number;
+//            }
+//        }
     }
     
     @Override
@@ -51,9 +57,7 @@ public class SyntaxException extends Exception {
         this.file = fileName;
     }
     
-    public void setTextIfNull(String text) {
-        if (this.text == null) {
-            this.text = text;
-        }
+    public void setCode(Code code) {
+        this.code = code;
     }
 }

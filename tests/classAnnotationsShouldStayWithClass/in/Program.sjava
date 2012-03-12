@@ -1,0 +1,7 @@
+System.out.println("test");
+
+@Edible(true)
+@Overridable(value = true)
+public class Program {
+
+}

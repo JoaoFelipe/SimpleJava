@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -36,6 +37,7 @@ public class SimpleJava {
 
     public static void apply(String inputFile, String outputFile) throws SyntaxException {
         String text = "";
+        Code code = new Code(text);
         try {
             File in = new File(inputFile);
             File out = new File(outputFile);
@@ -44,68 +46,123 @@ public class SimpleJava {
                 Scanner scanner = new Scanner(in);
                 writer = new BufferedWriter(new FileWriter(out));
                 
-                while (scanner.hasNextLine()) {
-                    text += scanner.nextLine() + '\n';
-                }
-                text = text.substring(0, text.length() - 1);
+                code = Code.readFile(scanner);
+                code.extractBlocks();
+                System.out.println(code.text+"\n---------------\n");
+                int current = 0;
+                current = code.movePackage(current);
+                System.out.println(code.text+"\n---------------\n");
+                code.removeInners();
+                current = code.moveImports(current);
+                System.out.println(code.text+"\n---------------\n");
+                code.removeInners();
+                current = code.moveClasses(current, className(inputFile));
+                System.out.println(code.text+"\n---------------\n");
+                code.removeInners();
                 
-                List<Classe> classes = Classe.extractClasses(text);
-                List<Import> imports = Import.extractImports(text);
-                List<Package> packages = Package.extractPackages(text);
-                List<Method> methods = Method.extractMethods(text);
-
-                List<AbstractBlock> blocks = new ArrayList<AbstractBlock>();
-                blocks.addAll(classes);
-                blocks.addAll(imports);
-                blocks.addAll(packages);
-                blocks.addAll(methods);
-
-                String mainText = AbstractBlock.removeBlocksFromText(blocks, text);
-
-
-                if (!packages.isEmpty()) {
-                    writer.write(packages.get(0).text);
-                    writer.write("\n");
-                }
-
-                for (Import imp : imports) {
-                    writer.write(imp.text);
-                }
-                if (!imports.isEmpty()) {
-                    writer.write("\n\n");
-                }
-
-
-                String name = className(inputFile);
-                boolean found = false;
-                for (int i = 0; i < classes.size(); i++) {
-                    Classe classe = classes.get(i);
-                    
-                    if (classe.getName().equals(name)) {
-                        if (classe.isInterface()) {
-                            throw new SyntaxException("Main cannot be created on Interface", classe.start);
+                Classe mainClass = code.mainClass;
+                
+//                
+                System.out.println(code.text+"\n---------------\n");
+                for (Method method : code.methods) {
+                    int pos = 0;
+                    code.add(mainClass.getStartBlockPosition(), "\n\n", true);
+                    pos += 2;
+                    System.out.println(code.text+"\n---------------\n");
+                    code.move(method, mainClass.getStartBlockPosition() + pos);
+                    assert method.length() == method.text.length();
+                    pos += method.text.length();
+                    System.out.println(code.text+"\n---------------\n");
+                    if (!method.isStatic()) {
+                        if (mainClass.getStartBlockPosition() + 2 + method.staticPosition() <= method.getStart()) {
+                            code.add(mainClass.getStartBlockPosition() + 2 + method.staticPosition(), "static ", true);
+                            method.setStart(method.getStart()-7);
+                        } else {
+                            code.add(mainClass.getStartBlockPosition() + 2 + method.staticPosition(), "static ", true);
                         }
-                        classe.addMain(mainText);
-                        for (Method method : methods) {
-                            classe.addStaticMethod(method);
-                        }
-                        found = true;
-                    } else if (classe.isPublic()) {
-                        throw new SyntaxException("Public Class should be declared in a File with it name", text, classe.start);
+//                        method.setStart(method.getStart()-7);
+                        pos += 7;
+                        System.out.println(code.text+"\n---------------\n");
                     }
-                    writer.write(classe.getText());
-                    if (i != classes.size() - 1 || !found) {
-                        writer.write("\n\n");
-                    }
+//                    code.text.substring(method.getStart(), method.getEnd())
+                    pos += code.addIdent(method);
+                    System.out.println(code.text+"\n---------------\n");
+                    code.text.substring(current+pos);
+                    current += pos;
                 }
-                if (!found) {
-                    Classe main = new Classe(name);
-                    main.addMain(mainText);
-                    for (Method method : methods) {
-                        main.addStaticMethod(method);
-                    }
-                    writer.write(main.getText());
+                
+
+                Method main = mainClass.getMain();
+                if (main != null){
+                    throw new SyntaxException("Main already exists", mainClass.getStart()+mainClass.definitionLength+main.getStart());
                 }
+                
+                int pos = 0;
+                int start = mainClass.getStartBlockPosition();
+                code.add(start, "\n\n", true);
+                System.out.println(code.text+"\n---------------\n");
+                pos += 2;
+                code.add(start+pos, "public static void main(String[] args) {\n", true); 
+                System.out.println(code.text+"\n---------------\n");
+                pos += 41;
+                Pattern pattern = Pattern.compile(RegexUtil.BLANK+"*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
+                Matcher matcher = pattern.matcher(code.text);
+                int i = code.text.length();
+                if (matcher.find()) {
+                    i = matcher.start();
+                }
+                System.out.println("code.text.length() = " + code.text.length());
+                System.out.println("i = " + i);
+                code.text.substring(current+pos,i);
+                Block block = new Block(current+pos, i);
+                code.move(block, start+pos);
+                System.out.println(code.text+"\n---------------\n");
+                pos += block.length();
+                pos += code.addIdent(block);
+                System.out.println(code.text+"\n---------------\n");
+                code.add(start+pos, "\n}", true);
+                pos += 2;
+                block = new Block(start+2, start+pos);
+//                code.text.substring(block.getStart(), block.getEnd());
+                code.addIdent(block);
+                
+//                main.setStart(mainClass.getStartBlockPosition()+2);
+//                main.setEnd(mainClass.getStartBlockPosition()+2+main.getStaticText().length());
+//                current += main.getStaticText().length();
+//                current += code.addIdent(main);
+                System.out.println(code.text+"\n>--------------\n");
+//                
+////                assert mainClass.getText().indexOf("public static void main(String[] args) {") != -1;
+//                main.setStart(mainClass.getText().indexOf("public static void main(String[] args) {")+mainClass.getStart());
+//                main.setEnd(main.getStart() + main.text.length());
+//                current += mainClass.length();
+//                
+////                Block main = new Block()
+////                code.add(main.getStart(), "<=======>");
+////                System.out.println(code.text+"\n---------------\n");
+////              
+//                code.move(new Block(current, code.text.length()), main.getStart()+main.bracket+1);
+//                mainText = code.text.substring(current);
+                
+                writer.write(code.remakeComments());
+//                System.out.println("\n\n----------------\n");
+//                System.out.println(code.text);
+//                System.out.println("\n----------------\n\n");
+
+                
+//                if (main == null) {
+//                    main = new Classe(name);
+//                    main.addMain(mainText);
+//                    for (Method method : code.methods) {
+//                        main.addStaticMethod(method);
+//                    }
+//                    writer.write(main.getText());
+//                }
+//                
+//                main.addMain(mainText);
+//                for (Method method : code.methods) {
+//                    main.addStaticMethod(method);
+//                }
 
             } catch (IOException ex) {
                 Logger.getLogger(SimpleJava.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,7 +174,7 @@ public class SimpleJava {
                 }
             }
         } catch (SyntaxException s) {
-            s.setTextIfNull(text);
+            s.setCode(code);
             s.setFile(inputFile.substring(inputFile.lastIndexOf(File.separator) + 1));
             throw s;
         }

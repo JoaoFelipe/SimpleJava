@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  *
  * @author Joao
  */
-public class Import extends AbstractBlock {
+public class Import extends Block {
     
     public static Pattern pattern = Pattern.compile(RegexUtil._import(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE | Pattern.UNICODE_CASE | Pattern.CANON_EQ);
     
@@ -29,9 +29,8 @@ public class Import extends AbstractBlock {
     }
 
     public Import(String clsText, int start, int end) {
+        super(start, end);
         this.text = clsText;
-        this.start = start;
-        this.end = end;
     }
     
 }

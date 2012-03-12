@@ -200,7 +200,6 @@ public class BlocksTest {
 
 
     //TODO:
-    //annotation
     //comment, javadoc
     //static var
     //testar exemplos: http://en.wikipedia.org/wiki/Java_syntax

@@ -1,0 +1,11 @@
+System.out.println("test");
+
+@Edible(true)
+@Overridable(value = true)
+void teste() {
+    System.out.println("teste");
+}
+
+public class Program {
+
+}

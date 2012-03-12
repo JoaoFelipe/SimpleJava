@@ -1,0 +1,7 @@
+System.out.println("main");
+public class Program {
+    @interface I { 
+        String teste = "teste";
+    }
+    
+}

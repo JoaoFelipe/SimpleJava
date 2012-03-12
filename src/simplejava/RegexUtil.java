@@ -24,9 +24,22 @@ public class RegexUtil {
     public static final String TYPE = "[_A-Z][\\w.]*(<[^\\{\\}\\(\\);]+?>)?"; //without next char, > can bug
     public static final String NAME = "[_A-Z]\\w*";
     public static final String ARRAY = "(\\s*\\[\\s*\\])*";
-    
+    public static final String INLINE_COMMENT = "//.*?\\n";
+    public static final String MULTILINE_COMMENT = "/\\*.*?\\*/";
+    public static final String JAVADOC = "/\\*\\*.*?\\*/";
     
     public static final String MAIN_PARAMS = "String\\s*((\\.\\.\\.\\s*args)|(\\[\\s*\\]\\s*args)|(args\\s*\\[\\s*\\]))";
+
+    public static String _comments() {
+        return
+            group(
+                group(INLINE_COMMENT) + 
+                "|" +
+                group(MULTILINE_COMMENT) + 
+                "|" +
+                group(JAVADOC)
+            );
+    }
     
     public static String _annotation() {
         return
@@ -76,33 +89,34 @@ public class RegexUtil {
     public static String _class() {
         return
             group(separator()) +                    // 1
-            group(                                  // 2 : signature
-                group(CLASS_MODIFIERS) +            // 3(4,5) : modifiers
-                group(                              // 6
+            _annotation() +                         // 2(3,4,5)
+            group(                                  // 6 : signature
+                group(CLASS_MODIFIERS) +            // 7(8,9) : modifiers
+                group(                              // 10
                     "class" +
                     "|" +
-                    "interface" +
+                    "@?"+BLANK+"*interface" +
                     "|" +
                     "enum"
                 ) +
-                notSpecial(BLANK + "+") +           // 7
+                notSpecial(BLANK + "+") +           // 11
                 BLANK + "+" +
-                group(TYPE) +                       // 8(9) : name
-                group(                              // 10 : implements, extends
+                group(TYPE) +                       // 12(13) : name
+                group(                              // 14 : implements, extends
                     BLANK + "+" +
-                    group(                          // 11
-                        group (                     // 12 : extends
+                    group(                          // 15
+                        group (                     // 16 : extends
                             "extends" +
                             BLANK + "+" +
-                            group(TYPE)             // 13(14)
+                            group(TYPE)             // 17(18)
                         ) + "|" +
-                        group (                     // 15 : implements
+                        group (                     // 19 : implements
                             "implements" +
                             BLANK + "+" +
-                            group(                  // 16
-                                group(TYPE) +       // 17(18)
+                            group(                  // 20
+                                group(TYPE) +       // 21(22)
                                 BLANK + "*" +
-                                group(              // 19
+                                group(              // 23
                                     "," + 
                                     BLANK + "*"
                                 ) + "?"
@@ -118,25 +132,26 @@ public class RegexUtil {
     public static String _method() {
         return
             group(separator()) +                    // 1 
-            group(                                  // 2 : signature
-                group(METHOD_MODIFIERS) +           // 3(4,5) : modifiers
-                notSpecial(BLANK+"+") +             // 6 
-                group(TYPE+ARRAY) +                       // 7(8,9) : type
+            _annotation() +                         // 2(3,4,5)
+            group(                                  // 6 : signature
+                group(METHOD_MODIFIERS) +           // 7(8,9) : modifiers
+                notSpecial(BLANK+"+") +             // 10 
+                group(TYPE+ARRAY) +                 // 11(12,13) : type
                 BLANK + "+" +                 
-                notSpecial(BLANK + "*" + "\\(") +   // 10
-                group(NAME) +                       // 11 : name
+                notSpecial(BLANK + "*" + "\\(") +   // 14
+                group(NAME) +                       // 15 : name
                 BLANK + "*" +
                 "\\(" +
-                group(ANYTHING) +                   // 12 : params
+                group(ANYTHING) +                   // 16 : params
                 "\\)" +
                 BLANK + "*" +
-                group(                              // 13 : throws exceptions
+                group(                              // 17 : throws exceptions
                     "throws" +
                     BLANK + "+" +
-                    group(                          // 14 : exceptions
-                        group(NAME) +               // 15
+                    group(                          // 18 : exceptions
+                        group(NAME) +               // 19
                         BLANK + "*" +
-                        group(                      // 16
+                        group(                      // 20
                             "," + 
                             BLANK + "*"
                         ) + "?"

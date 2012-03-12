@@ -4,85 +4,84 @@
  */
 package simplejava;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Stack;
 
 /**
  *
  * @author Joao
  */
-public class Block extends AbstractBlock {
+public class Block {
+    private int start;
+    private int end;
     
-    public static List<Block> findBlocks(String text) {
-        List<Block> blocks = new ArrayList<Block>();
-        
-        Stack<Integer> stack = new Stack<Integer>();
-        int count = 0;
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
-            if (ch == '{') {
-                count++;
-                stack.add(i);
-            }
-            if (ch == '}') {
-                count--;
-                blocks.add(new Block(count, stack.pop(), i));
-            } 
-            
-        }
-        blocks.add(new Block(-1, 0, text.length()-1));
-        
-        
-        return blocks;
-    }
-    
-    public static List<Block> orderByLevel(List<Block> blocks) {
-        List<Block> result = new ArrayList<Block>();
-        result.addAll(blocks);
-        
-        Collections.sort(result, new Comparator<Block>(){
-            @Override
-            public int compare(Block o1, Block o2) {
-                return o2.getLevel().compareTo(o1.getLevel());
-            }
-        });
-        
-        return result;
-    }
-    
-    public static Block topBlock(AbstractBlock absb, List<Block> blocks) {
-        blocks = Block.orderByLevel(blocks);
-        for (int i = 0; i < blocks.size(); i++) {
-            Block block = blocks.get(i);
-            if (absb.isInnerIn(block)) {
-                return block;
-            }
-        }
-        return blocks.get(blocks.size()-1);
-    }
-    
-    public static Block blockThatStartsIn(int position, List<Block> blocks) {
-        for (int i = 0; i < blocks.size(); i++) {
-            Block block = blocks.get(i);
-            if (block.start == position) {
-                return block;
-            }
-        }
-        return null;
-    }
-    
-    private int level;
-
-    public Block(int count, int start, int end) {
+    public Block(int start, int end) {
         this.start = start;
         this.end = end;
-        this.level = count;
     }
     
-    public Integer getLevel() {
-        return level;
+    public boolean containPosition(int position) {
+        return (position >= getStart() - 1 && position <= getEnd());
+    }
+    
+    public static String removeBlocksFromText(List<Block> blocks, String text) {
+        String mainText = "";
+        for (int i = 0; i < text.length(); i++) {
+            boolean add = true;
+            for (Block abstractBlock : blocks) {
+                if (abstractBlock.containPosition(i)) {
+                    add = false;
+                }
+            }
+            if (add) {
+                mainText += text.charAt(i);
+            }
+        }
+        return mainText;
+    }
+    
+    public boolean isInnerIn(Block block){
+        return this != block && 
+               this.getStart() >= block.getStart() && 
+               this.getEnd() <= block.getEnd();
+    }
+    
+     
+    public boolean isInnerInList(List<? extends Block> blocks){
+        for (Block block : blocks) {
+            if (this.isInnerIn(block)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public int length() {
+        return getEnd()-getStart();
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public void setEnd(int end) {
+        this.end = end;
+    }
+    
+    public void setStartEnd(int start, int end) {
+        this.setStart(start);
+        this.setEnd(end);
+    }
+    
+    public void setStartLength(int start, int length) {
+        this.setStart(start);
+        this.setEnd(start+length);
     }
 }
